@@ -1,0 +1,67 @@
+<!-- AI生成 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QQ农场坐标标定工具</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<p data-aigc-mark="1" style="margin:0 0 8px;font-size:10px;line-height:1.3;color:#6b6560;font-weight:400;">AI生成</p>
+
+
+<header>
+  <div class="head-text">
+    <h1>QQ农场坐标标定工具</h1>
+    <p>QQFarmCoordinates.properties 各坐标含义 · 状态 · 修改后一键导出覆盖回配置文件</p>
+  </div>
+  <div class="head-actions">
+    <button id="btnExport" class="btn primary">生成配置并复制</button>
+    <button id="btnReset" class="btn">恢复初始值</button>
+  </div>
+</header>
+
+<div class="legend">
+  <span class="chip active">在用 · 改了直接生效</span>
+  <span class="chip ref">备用 · 方法存在但暂无调用</span>
+  <span class="chip legacy">未使用 · 遗留键，改了不影响程序</span>
+</div>
+
+<main>
+  <section class="card map-card">
+    <h2>位置示意图</h2>
+    <p class="hint">绿框 = 投屏画面；橙虚线 = 商店种子网格；蓝虚线 = 种子栏识别区域。圆点按当前值实时绘制，改输入框会跟着移动。<b>红圈 / 红框 = 越出投屏画面</b>（大概率是旧窗口遗留值，需要重新标定）。鼠标悬停左右任意一侧可互相高亮。</p>
+    <svg id="map" viewBox="0 0 620 860" xmlns="http://www.w3.org/2000/svg"></svg>
+  </section>
+
+  <section class="card list-card">
+    <h2>坐标清单</h2>
+    <div id="list"></div>
+  </section>
+</main>
+
+<section class="card sync-card">
+  <h2>✓ 单一数据源：GameConfig 已全部改为从 properties 读取</h2>
+  <p>下表中所有几何配置现在都经由 <code>GameConfig → CoordinateConfig → QQFarmCoordinates.properties</code> 加载，<b>改本页导出的配置文件即全部生效</b>，无需再改 Java：</p>
+  <table>
+    <thead><tr><th>properties 键</th><th>对应 GameConfig</th><th>作用</th></tr></thead>
+    <tbody>
+      <tr><td>qqFarm.store.location</td><td>（直接 CoordinateConfig 读取）</td><td>主界面商店按钮</td></tr>
+      <tr><td>qqFarm.first.field.location / field.check.exit</td><td>（直接 CoordinateConfig 读取）</td><td>第一块田 / 田检退出点</td></tr>
+      <tr><td>qqFarm.seedGrid.*（四角 + cols/rows）</td><td>GRID_LEFT/TOP/RIGHT/BOTTOM/COLS/ROWS</td><td>商店种子网格扫描范围与行列数</td></tr>
+      <tr><td>qqFarm.seedBar.* / badge.offset.*</td><td>SEED_BAR_* / BADGE_TO_SEED_OFFSET_*</td><td>播种时种子栏角标识别区域与偏移</td></tr>
+    </tbody>
+  </table>
+  <p class="note">仍留在 Java 里的内容（不属于坐标）：时间参数（30秒偷菜间隔、30分钟复查、轮询10秒）、模板图片路径、匹配阈值/聚类半径等算法参数。旧版拖拽播种的 S 型路线配置已随「一键种植」方案整体删除。</p>
+</section>
+
+<section class="card export-card">
+  <h2>导出结果</h2>
+  <p class="hint">下面是由上方输入框实时生成的完整配置内容。点「生成配置并复制」后，整体覆盖 <code>src/main/resources/QQFarmCoordinates.properties</code> 即可。</p>
+  <textarea id="exportBox" spellcheck="false"></textarea>
+</section>
+
+<script src="app.js"></script>
+</body>
+</html>
